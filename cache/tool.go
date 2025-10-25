@@ -78,7 +78,7 @@ func ensureDestNotExists(dest string) error {
 }
 
 func copyURL(dest io.Writer, source string) error {
-	wrapError := func(err error, format string, args ...interface{}) error {
+	wrapError := func(err error, format string, args ...any) error {
 		return fmt.Errorf("failed to download "+source+" "+format+" : %v", append(args, err)...)
 	}
 	if dest == nil {
@@ -164,7 +164,7 @@ func noRel(path string) string {
 func cache(source, target string, options CacheOptions) (string, error) {
 	destFolder := toolPath(options)
 	completeMarker := destFolder + ".complete"
-	wrapError := func(err error, format string, args ...interface{}) (string, error) {
+	wrapError := func(err error, format string, args ...any) (string, error) {
 		return "", fmt.Errorf("failed to save "+source+" to cache "+format+" : %v", append(args, err)...)
 	}
 	options, err := defaultOptions(options)
@@ -304,7 +304,7 @@ func DownloadTool(url string, options *DownloadToolOptions) (string, error) {
 	//     allowRetries: true,
 	//     maxRetries: 3
 	//   })
-	wrapError := func(err error, format string, args ...interface{}) (string, error) {
+	wrapError := func(err error, format string, args ...any) (string, error) {
 		return "", fmt.Errorf(format+" : %v", append(args, err)...)
 	}
 	dest := destination(options)

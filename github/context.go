@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/actions-go/toolkit/core"
-	"github.com/google/go-github/v42/github"
+	"github.com/google/go-github/v74/github"
 )
 
 // Context contains details on the workflow execution
@@ -95,7 +95,7 @@ type ActionContext struct {
 }
 
 func noGitHubEvent(path string) {
-	fmt.Println(fmt.Sprintf("GITHUB_EVENT_PATH %s does not exist", path))
+	fmt.Printf("GITHUB_EVENT_PATH %s does not exist\n", path)
 }
 
 func getIndex(a []string, i int) string {

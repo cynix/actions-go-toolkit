@@ -84,14 +84,14 @@ func (c *command) String() string {
 		s += sep + key + "=" + escape(value)
 		sep = ","
 	}
-	return s + cmdString + escape(c.message)
+	return s + cmdString + escapeData(c.message)
 }
 
 func escapePatterns(v string, replacementsArg ...map[string]string) string {
-	v = strings.Replace(v, "%", "%25", -1)
+	v = strings.ReplaceAll(v, "%", "%25")
 	for _, replacements := range replacementsArg {
 		for pattern, replacement := range replacements {
-			v = strings.Replace(v, pattern, replacement, -1)
+			v = strings.ReplaceAll(v, pattern, replacement)
 		}
 	}
 	return v

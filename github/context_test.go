@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"testing"
@@ -38,7 +37,7 @@ func toReal(v reflect.Value) reflect.Value {
 	return v
 }
 
-func filterEmpty(i interface{}) interface{} {
+func filterEmpty(i any) any {
 	v := reflect.ValueOf(i)
 
 	switch v.Kind() {
@@ -64,8 +63,8 @@ func filterEmpty(i interface{}) interface{} {
 	return v.Interface()
 }
 
-func deserializeAnonymous(r io.Reader) interface{} {
-	var d interface{}
+func deserializeAnonymous(r io.Reader) any {
+	var d any
 	json.NewDecoder(r).Decode(&d)
 	return filterEmpty(d)
 }
@@ -88,7 +87,7 @@ func testEventParser(t *testing.T, path string) {
 		e := ParseActionEnv()
 		b := bytes.NewBuffer(nil)
 		assert.NoError(t, json.NewEncoder(b).Encode(e.Payload))
-		data, err := ioutil.ReadFile(path)
+		data, err := os.ReadFile(path)
 		assert.NoError(t, err)
 		assert.Equal(t, deserializeAnonymous(bytes.NewReader(data)), deserializeAnonymous(b))
 	})

@@ -3,7 +3,6 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 	"sync"
@@ -30,18 +29,11 @@ var (
 	status       = StatusSuccess
 	statusAccess = &sync.Mutex{}
 	lookupEnv    = os.LookupEnv
-	open         = func(path string, flag int, perm os.FileMode) (File, error) {
-		fd, err := os.OpenFile(path, flag, perm)
-		if err != nil {
-			return nil, err
-		}
-		return fd, nil
-	}
 	jsonInputs = func() map[string]string {
 		r := map[string]string{}
 		encoded, ok := os.LookupEnv(ActionsGoJsonInputEnvName)
 		if ok {
-			raw := map[string]interface{}{}
+			raw := map[string]any{}
 			err := json.Unmarshal([]byte(encoded), &raw)
 			if err != nil {
 				Warningf("Unable to decode action-go inputs: %v", err)
@@ -64,12 +56,6 @@ var (
 		return r
 	}()
 )
-
-type File interface {
-	io.Reader
-	io.Writer
-	io.Closer
-}
 
 func formatOutput(name, value string) string {
 	return strings.Join(
@@ -112,7 +98,7 @@ func GetBoolInput(name string) bool {
 
 // GetInput gets the value of an input.  The value is also trimmed.
 func GetInput(name string) (string, bool) {
-	val, ok := lookupEnv(strings.ToUpper("INPUT_" + strings.Replace(name, " ", "_", -1)))
+	val, ok := lookupEnv(strings.ToUpper("INPUT_" + strings.ReplaceAll(name, " ", "_")))
 	if !ok {
 		Debug("Did not find the input using plain gha input format, trying the actions-go one")
 		val, ok := jsonInputs[name]
@@ -142,7 +128,7 @@ func SetOutput(name, value string) {
 }
 
 // SetFailedf sets the action status to failed and sets an error message
-func SetFailedf(format string, args ...interface{}) {
+func SetFailedf(format string, args ...any) {
 	SetFailed(fmt.Sprintf(format, args...))
 }
 
@@ -160,7 +146,7 @@ func Debug(message string) {
 }
 
 // Debugf writes debug message to user log
-func Debugf(format string, args ...interface{}) {
+func Debugf(format string, args ...any) {
 	Debug(fmt.Sprintf(format, args...))
 }
 
@@ -170,7 +156,7 @@ func Error(message string) {
 }
 
 // Errorf writes debug message to user log
-func Errorf(format string, args ...interface{}) {
+func Errorf(format string, args ...any) {
 	Error(fmt.Sprintf(format, args...))
 }
 
@@ -180,7 +166,7 @@ func Warning(message string) {
 }
 
 // Warningf writes debug message to user log
-func Warningf(format string, args ...interface{}) {
+func Warningf(format string, args ...any) {
 	Warning(fmt.Sprintf(format, args...))
 }
 
@@ -190,7 +176,7 @@ func Info(message string) {
 }
 
 // Infof writes debug message to user log
-func Infof(format string, args ...interface{}) {
+func Infof(format string, args ...any) {
 	Info(fmt.Sprintf(format, args...))
 }
 

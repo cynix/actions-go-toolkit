@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/actions-go/toolkit/core"
-	"github.com/google/go-github/v42/github"
+	"github.com/google/go-github/v74/github"
 	"golang.org/x/oauth2"
 )
 
@@ -41,7 +41,7 @@ func NewClient() *github.Client {
 	if server, ok := os.LookupEnv("GITHUB_SERVER_URL"); !ok || server == "https://github.com" {
 		return github.NewClient(httpClient)
 	}
-	client, err := github.NewEnterpriseClient(os.Getenv("GITHUB_SERVER_URL"), os.Getenv("GITHUB_SERVER_URL"), httpClient)
+	client, err := github.NewClient(httpClient).WithEnterpriseURLs(os.Getenv("GITHUB_SERVER_URL"), os.Getenv("GITHUB_SERVER_URL"))
 	if err != nil {
 		core.Errorf("failed to initialise GitHub client: %v", err)
 	}

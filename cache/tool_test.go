@@ -2,7 +2,6 @@ package cache_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -29,7 +28,7 @@ func TestDownloadTool(t *testing.T) {
 	assert.Regexp(t, regexp.MustCompile(fmt.Sprintf(`^temp-%s[/\\][0-9a-f-]{36}`, testID)), f)
 	_, err = os.Stat(f)
 	assert.NoError(t, err)
-	bytes, err := ioutil.ReadFile(f)
+	bytes, err := os.ReadFile(f)
 	assert.NoError(t, err)
 	assert.Equal(t, data, string(bytes))
 }
@@ -51,7 +50,7 @@ func TestGetCachedToolOrDownload(t *testing.T) {
 	assert.Regexp(t, regexp.MustCompilePOSIX(fmt.Sprintf(`^temp-%s[/\\][0-9a-f-]{36}`, testID)), f)
 	_, err = os.Stat(f)
 	assert.NoError(t, err)
-	bytes, err := ioutil.ReadFile(f)
+	bytes, err := os.ReadFile(f)
 	assert.NoError(t, err)
 	assert.Equal(t, data, string(bytes))
 
@@ -62,7 +61,7 @@ func TestGetCachedToolOrDownload(t *testing.T) {
 	assert.Equal(t, filepath.Join("test-cache-"+testID, "my-tool", "1.0.1", "my-tool"), f)
 	_, err = os.Stat(f)
 	assert.NoError(t, err)
-	bytes, err = ioutil.ReadFile(f)
+	bytes, err = os.ReadFile(f)
 	assert.NoError(t, err)
 	assert.Equal(t, data, string(bytes))
 }
